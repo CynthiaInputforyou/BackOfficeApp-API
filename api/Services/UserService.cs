@@ -6,7 +6,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace BackOfficeApp.Services
 {
-    public class UserService : Controller
+    public class UserService 
     {
         private readonly AppDbContext _context;
 
@@ -24,13 +24,13 @@ namespace BackOfficeApp.Services
         }
 
         //Método editar usuario
-        public async Task<User?> UpdateUser (int id, User updated)
+        public async Task<User?> UpdateUser(int id, string name, string email)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null) return null;
 
-            user.Name = updated.Name;
-            user.Email = updated.Email;
+            user.Name = name;
+            user.Email = email;
 
             await _context.SaveChangesAsync();
             return user;
