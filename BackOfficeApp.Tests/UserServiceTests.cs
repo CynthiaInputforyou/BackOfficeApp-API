@@ -104,5 +104,51 @@ namespace BackOfficeApp.Tests
             // 3️.Comprobar
             Assert.Equal(10, result.Count);
         }
+
+        //Test SoftDelete
+        //Si existe 
+        [Fact]
+        public async Task SoftDelete_SiExiste_DesactivaYDevuelveTrue()
+        {
+            // Preparar
+            var context = GetDbContext();
+            var service = new UserService(context);
+
+            var user = new User
+            {
+                Name = "Ana",
+                Email = "ana@test.com",
+                IsActive = true
+            };
+
+            context.Users.Add(user);
+            await context.SaveChangesAsync();
+
+            // Ejecutar
+            var result = await service.SoftDelete(user.Id);
+
+            // Comprobar
+            Assert.True(result);
+
+            var updatedUser = await context.Users.FindAsync(user.Id);
+            Assert.NotNull(updatedUser);
+            Assert.False(updatedUser.IsActive);
+        }
+
+        //Si no existe
+        [Fact]
+        public async Task SoftDelete_SiNoExiste_DevuelveFalse()
+        {
+            // Preparar
+            var context = GetDbContext();
+            var service = new UserService(context);
+
+            // Ejecutar
+            var result = await service.SoftDelete(999);
+
+            // Comprobar
+            Assert.False(result);
+        }
     }
+
 }
